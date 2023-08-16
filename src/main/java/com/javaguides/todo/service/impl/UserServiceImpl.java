@@ -30,15 +30,15 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public User createUser(User user) {
-        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
-        String roleName = ((Role)user.getRoles().iterator().next()).getName();
-        Optional<Role> role = this.roleRepository.findByName(roleName);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        String roleName = user.getRoles().iterator().next().getName();
+        Optional<Role> role = roleRepository.findByName(roleName);
         if (role.isPresent()) {
             user.setRoles(Set.of((Role)role.get()));
         } else {
             user.setRoles(Set.of((Role)user.getRoles().stream().findFirst().orElseThrow()));
         }
 
-        return (User)this.userRepository.save(user);
+        return userRepository.save(user);
     }
 }
